@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <title>राजकीय उच्च प्राथमिक विद्यालय, कल्याणपुरा - डिजिटल पोर्टल</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Great+Vibes&family=Playfair+Display:ital,wght@0,500;1,500&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Segoe UI', Arial; background: #f4f7f6; margin: 0; padding: 0; }
+        header { background: #1d3557; color: white; padding: 25px; text-align: center; border-bottom: 5px solid #e63946; }
+        .container { max-width: 1100px; margin: 20px auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        h2 { color: #e63946; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
+        
+        /* शिक्षक बोर्ड स्टाइल */
+        .staff-table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
+        .staff-table th { background: #f1faee; color: #1d3557; padding: 12px; border: 1px solid #ccc; }
+        .staff-table td { padding: 10px; border: 1px solid #ccc; text-align: center; font-size: 14px; }
+
+        /* जनरेटर और सर्च फॉर्म */
+        .admin-box { background: #f8f9fa; padding: 20px; border: 1px solid #1d3557; border-radius: 8px; margin-bottom: 30px; display: flex; flex-wrap: wrap; gap: 10px; }
+        input, button { padding: 12px; border-radius: 5px; border: 1px solid #ccc; }
+        .btn-main { background: #1d3557; color: white; cursor: pointer; border: none; font-weight: bold; }
+        .btn-search { background: #e63946; color: white; cursor: pointer; border: none; }
+
+        /* प्रोफेशनल सर्टिफिकेट स्टाइल */
+        #cert-container { 
+            width: 850px; height: 600px; background: #fff; border: 18px double #8b4513; 
+            margin: 20px auto; display: none; padding: 40px; box-sizing: border-box; text-align: center;
+            background-image: radial-gradient(#fff 80%, #fff9e6);
+        }
+        .cert-header { font-family: 'Cinzel', serif; font-size: 45px; color: #3d2b1f; margin: 0; }
+        .cert-sub { font-family: 'Playfair Display', serif; font-size: 20px; font-style: italic; margin: 15px 0; }
+        .s-name { font-family: 'Great Vibes', cursive; font-size: 44px; color: #1d3557; border-bottom: 1px solid #000; display: inline-block; padding: 0 30px; }
+        .cert-text { font-family: 'Playfair Display', serif; font-size: 16px; line-height: 1.6; margin: 20px 30px; text-align: justify; }
+        .cert-footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 35px; padding: 0 30px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>राजकीय उच्च प्राथमिक विद्यालय, कल्याणपुरा</h1>
+    <p>UDISE: 08121010701 | जयपुर, राजस्थान</p>
+</header>
+
+<div class="container">
+    <!-- 1. शिक्षक बोर्ड (Image 1000668848.jpg के अनुसार) -->
+    <section>
+        <h2>हमारे शिक्षक (Staff Record)</h2>
+        <table class="staff-table">
+            <thead>
+                <tr><th>क्र.सं.</th><th>नाम शिक्षक</th><th>मोबाइल</th><th>ID</th><th>विषय</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td>श्री देशराज गुर्जर</td><td>9664392029</td><td>RJJP201818025486</td><td>प्रधानाध्यापक (हिन्दी)</td></tr>
+                <tr><td>2</td><td>श्री रिंकू अग्रवाल</td><td>9414638407</td><td>RJJP200518019603</td><td>अध्यापक (संस्कृत)</td></tr>
+                <tr><td>3</td><td>श्री हरिपाल बैरवा</td><td>7300304410</td><td>RJBW200508005058</td><td>सा. विज्ञान</td></tr>
+                <tr><td>4</td><td>श्री राहुल वालिया</td><td>9541274921</td><td>RJJP202118024574</td><td>अंग्रेजी</td></tr>
+                <tr><td>5</td><td>श्री चेतन कुमार सैनी</td><td>9667636095</td><td>RJBW202008019623</td><td>विज्ञान-गणित</td></tr>
+                <tr><td>6</td><td>श्रीमती रेणु वर्मा</td><td>8764031461</td><td>RJJP201218038974</td><td>अध्यापिका ले-1</td></tr>
+                <tr><td>7</td><td>श्री सीताराम चौधरी</td><td>8769716603</td><td>RJJP202218025913</td><td>अध्यापक ले-1</td></tr>
+                <tr><td>8</td><td>श्री रामकुमार बैरवा</td><td>9784568447</td><td>RJJP200818004133</td><td>प्रबोधक ले-1</td></tr>
+                <tr><td>9</td><td>श्री कमलेश कुमार मीणा</td><td>9680791625</td><td>RJJP202317002185</td><td>शारीरिक शिक्षक</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- 2. सर्टिफिकेट जनरेटर और सर्च -->
+    <section>
+        <h2>सर्टिफिकेट मैनेजमेंट</h2>
+        <div class="admin-box">
+            <input type="text" id="nameIn" placeholder="छात्र का नाम">
+            <input type="text" id="fatherIn" placeholder="पिता का नाम">
+            <input type="text" id="courseIn" placeholder="कोर्स (उदा: 120 Hours Internship)">
+            <input type="text" id="rollIn" placeholder="रोल नंबर">
+            <input type="date" id="dateIn">
+            <button class="btn-main" onclick="generateAndSave()">सर्टिफिकेट बनाएँ और रिकॉर्ड में जोड़ें</button>
+        </div>
+        
+        <div class="admin-box" style="border-color: #e63946;">
+            <input type="text" id="searchRoll" placeholder="जारी सर्टिफिकेट खोजें (रोल नंबर)">
+            <button class="btn-search" onclick="searchRecord()">रिकॉर्ड खोजें (Search)</button>
+        </div>
+    </section>
+
+    <!-- 3. सर्टिफिकेट टेम्पलेट (Image 1000669245.jpg स्टाइल) -->
+    <div id="cert-container">
+        <div class="cert-header">Certificate of Internship</div>
+        <div class="cert-sub">This is to certify that</div>
+        <div class="s-name" id="oName">---</div>
+        <div class="cert-text">
+            Mr./Ms. <b id="oName2">---</b> Son/Daughter/Wife of <b id="oFather">---</b> 
+            has successfully completed <b>120 hours of Internship</b> under the <b>NEP-2020 UG Curriculum</b>. 
+            The internship was carried out in <b id="oCourse">---</b>. 
+            The learner has acquired hands-on experience and successfully completed project-based assignments.
+        </div>
+        <div class="cert-footer">
+            <div id="qrcode"></div>
+            <div style="text-align: center;">
+                <p>Date: <b id="oDate">---</b></p>
+                <div style="width: 150px; border-bottom: 2px solid #000; margin-top: 30px;"></div>
+                <p>Authorized Seal and Sign</p>
+            </div>
+        </div>
+    </div>
+    <center><button id="dl" style="display:none; margin-top:10px;" class="btn-main" onclick="download()">इमेज डाउनलोड करें</button></center>
+</div>
+
+<script>
+    // स्थानीय रिकॉर्ड स्टोर करने के लिए (यह आपके ब्राउज़र में सुरक्षित रहेगा)
+    let certificateDatabase = JSON.parse(localStorage.getItem('schoolRecords')) || {};
+
+    function generateAndSave() {
+        const data = {
+            name: document.getElementById('nameIn').value,
+            father: document.getElementById('fatherIn').value,
+            course: document.getElementById('courseIn').value,
+            roll: document.getElementById('rollIn').value,
+            date: document.getElementById('dateIn').value
+        };
+
+        if(!data.name || !data.roll) { alert("नाम और रोल नंबर भरें"); return; }
+
+        // रिकॉर्ड सेव करें
+        certificateDatabase[data.roll] = data;
+        localStorage.setItem('schoolRecords', JSON.stringify(certificateDatabase));
+
+        showCertificate(data);
+        alert("सर्टिफिकेट जनरेट हो गया और रिकॉर्ड में सुरक्षित कर दिया गया है!");
+    }
+
+    function searchRecord() {
+        const roll = document.getElementById('searchRoll').value;
+        const record = certificateDatabase[roll];
+        if(record) {
+            showCertificate(record);
+        } else {
+            alert("इस रोल नंबर का कोई सर्टिफिकेट जारी नहीं किया गया है।");
+        }
+    }
+
+    function showCertificate(data) {
+        document.getElementById('oName').innerText = data.name;
+        document.getElementById('oName2').innerText = data.name;
+        document.getElementById('oFather').innerText = data.father;
+        document.getElementById('oCourse').innerText = data.course;
+        document.getElementById('oDate').innerText = data.date;
+
+        document.getElementById('qrcode').innerHTML = "";
+        new QRCode(document.getElementById("qrcode"), {
+            text: "Verified: " + data.name + " (Roll: " + data.roll + ") - GUPS Kalyanpura",
+            width: 100, height: 100
+        });
+
+        document.getElementById('cert-container').style.display = 'block';
+        document.getElementById('dl').style.display = 'inline-block';
+    }
+
+    function download() {
+        html2canvas(document.querySelector("#cert-container")).then(canvas => {
+            let a = document.createElement('a');
+            a.download = 'GUPS_Certificate.png';
+            a.href = canvas.toDataURL();
+            a.click();
+        });
+    }
+</script>
+</body>
+</html>
