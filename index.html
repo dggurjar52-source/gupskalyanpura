@@ -3,28 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>आधिकारिक ऑनलाइन सत्यापन पोर्टल - GUPS कल्याणपुरा</title>
+    <title>ऑनलाइन सत्यापन पोर्टल - GUPS कल्याणपुरा</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f7f6; margin: 0; padding: 0; color: #333; }
-        header { background: #1d3557; color: white; padding: 25px; text-align: center; border-bottom: 4px solid #e63946; }
+        header { background: #1d3557; color: white; padding: 20px; text-align: center; border-bottom: 4px solid #e63946; }
         header h1 { margin: 0; font-size: 24px; }
-        header p { margin: 6px 0 0 0; font-size: 14px; opacity: 0.9; }
-        
+        header p { margin: 5px 0 0 0; font-size: 14px; opacity: 0.9; }
         .container { max-width: 750px; margin: 25px auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
-        
-        /* एडमिन के लिए लिंक सेटिंग बॉक्स */
-        .sheet-setting-box { background: #fff3cd; border: 1px solid #ffeeba; padding: 15px; border-radius: 6px; margin-bottom: 20px; }
-        .sheet-setting-box h4 { margin: 0 0 8px 0; color: #856404; }
-        .url-input { width: 80%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; }
-        .btn-save { background: #856404; color: white; padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; }
-
-        /* सर्च सेक्शन */
         .search-section { background: #f8f9fa; padding: 20px; border: 1px solid #ddd; border-radius: 6px; text-align: center; margin-bottom: 25px; }
         .input-box { padding: 10px; width: 220px; border: 1px solid #ccc; border-radius: 4px; margin: 5px; font-size: 14px; }
         .btn-verify { background: #e63946; color: white; padding: 10px 25px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 14px; }
         
-        /* डेटा डिस्प्ले टेबल */
         #verification-area { display: none; margin-top: 20px; border: 2px solid #2a9d8f; border-radius: 6px; padding: 20px; background: #fafafa; }
         .status-badge { background: #2a9d8f; color: white; padding: 6px 12px; display: inline-block; font-weight: bold; border-radius: 4px; margin-bottom: 15px; font-size: 14px; }
         .data-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 16px; }
@@ -35,7 +25,7 @@
         .footer-note { text-align: center; margin-top: 20px; font-size: 12px; color: #666; font-style: italic; border-top: 1px dashed #ccc; padding-top: 10px; }
     </style>
 </head>
-<body onload="initPortal()">
+<body onload="checkUrlForQR()">
 
 <header>
     <h1>राजकीय उच्च प्राथमिक विद्यालय, कल्याणपुरा (जयपुर)</h1>
@@ -43,14 +33,6 @@
 </header>
 
 <div class="container">
-    
-    <div class="sheet-setting-box">
-        <h4>🛠️ गूगल शीट लिंक सेटिंग (Admin Panel)</h4>
-        <p style="margin: 0 0 8px 0; font-size: 12px; color: #666;">अपनी गूगल शीट का कोई भी लिंक (सामान्य या पब्लिश) यहाँ पेस्ट करके सेव कर दें:</p>
-        <input type="text" id="sheetUrlInput" class="url-input" placeholder="यहाँ अपनी गूगल शीट का लिंक पेस्ट करें...">
-        <button class="btn-save" onclick="saveSheetUrl()">लिंक सेव करें</button>
-    </div>
-
     <div class="search-section">
         <h3 style="margin-top:0; color:#1d3557;">यूनिवर्सिटी रोल नंबर से सर्टिफिकेट खोजें</h3>
         <input type="text" id="sRoll" class="input-box" placeholder="यूनिवर्सिटी रोल नंबर दर्ज करें">
@@ -84,57 +66,18 @@
 </div>
 
 <script>
-    // डिफ़ॉल्ट रूप से आपकी वर्तमान शीट सेट है
-    const defaultSheetId = "1S--0HjRw-mDRvmoq7fikwj-4tCancRyN3_ncUKWSJao";
-    let finalFetchUrl = `https://docs.google.com/spreadsheets/d/${defaultSheetId}/export?format=csv&gid=0`;
+    // ********************************************************************************
+    // ★★ लाइन नंबर 76: नीचे उद्धरण चिह्न "" के बीच अपनी गूगल शीट का पूरा लिंक पेस्ट करें ★★
+    // ********************************************************************************
+    const MyGoogleSheetUrl = "https://docs.google.com/spreadsheets/d/1S--0HjRw-mDRvmoq7fikwj-4tCancRyN3_ncUKWSJao/edit";
+    // ********************************************************************************
 
-    function initPortal() {
-        // अगर पहले से कोई लिंक सेव है तो उसे लोड करना
-        const savedUrl = localStorage.getItem('userSheetUrl');
-        if (savedUrl) {
-            document.getElementById('sheetUrlInput').value = savedUrl;
-            processUrl(savedUrl);
-        } else {
-            document.getElementById('sheetUrlInput').value = `https://docs.google.com/spreadsheets/d/${defaultSheetId}/edit`;
-        }
-        
-        // क्यूआर कोड से आने वाले रोल नंबर को चेक करना
-        const urlParams = new URLSearchParams(window.location.search);
-        const roll = urlParams.get('roll');
-        if(roll) { 
-            document.getElementById('sRoll').value = roll; 
-            setTimeout(searchData, 800); 
-        }
-    }
-
-    function saveSheetUrl() {
-        const inputUrl = document.getElementById('sheetUrlInput').value.trim();
-        if(!inputUrl) {
-            alert("कृपया एक वैध गूगल शीट का लिंक डालें!");
-            return;
-        }
-        localStorage.setItem('userSheetUrl', inputUrl);
-        processUrl(inputUrl);
-        alert("गूगल शीट का लिंक सफलतापूर्वक सेव हो गया है! अब आप सर्च कर सकते हैं।");
-    }
-
-    function processUrl(url) {
-        // अगर सामान्य लिंक है तो उसमें से आईडी निकालकर उसे डायरेक्ट डाउनलोड (CSV) लिंक में बदलना
-        if (url.includes('/spreadsheets/d/')) {
-            const matches = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
-            if (matches && matches[1]) {
-                finalFetchUrl = `https://docs.google.com/spreadsheets/d/${matches[1]}/export?format=csv&gid=0`;
-                return;
-            }
-        }
-        // अगर पब्लिश लिंक है तो सीधे उपयोग करना
-        if (url.includes('pub?')) {
-            if (url.includes('output=csv')) {
-                finalFetchUrl = url;
-            } else {
-                finalFetchUrl = url.replace(/output=[a-zA-Z]+/, 'output=csv');
-            }
-        }
+    let finalCsvUrl = MyGoogleSheetUrl;
+    if (https://docs.google.com/spreadsheets/d/e/2PACX-1vQBoA7xgXY1dcSuuYbTt-rsKV0gpKdUeNmq2roHIMAg6EBPkxrYEIANB4Ik3UKfqxls8vd9OIRvOxs_/pub?output=csv('/spreadsheets/d/')) {
+        const sheetId = MyGoogleSheetUrl.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/)[1];
+        finalCsvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=0`;
+    } else if (MyGoogleSheetUrl.includes('pub?') && !MyGoogleSheetUrl.includes('output=csv')) {
+        finalCsvUrl = MyGoogleSheetUrl.replace(/output=[a-zA-Z]+/, 'output=csv');
     }
 
     function searchData() {
@@ -142,23 +85,19 @@
         const name = document.getElementById('sName').value.trim().toLowerCase();
 
         if(!roll && !name) {
-            alert("कृपया यूनिवर्सिटी रोल नंबर या नाम दर्ज करें!");
+            alert("कृपया रोल नंबर या नाम दर्ज करें!");
             return;
         }
 
-        // छुपा हुआ डेटा एरिया पहले बंद करना
-        document.getElementById('verification-area').style.display = 'none';
-
-        Papa.parse(finalFetchUrl, {
+        Papa.parse(finalCsvUrl, {
             download: true,
             header: true,
             skipEmptyLines: true,
             complete: function(results) {
-                console.log("शीट से प्राप्त डेटा:", results.data);
+                console.log("डेटा:", results.data);
 
-                // आपकी शीट के कॉलम नामों के सटीक मिलान के साथ खोजना
                 const student = results.data.find(row => {
-                    const sheetRoll = (row["RollNumber"] || row["RollNumI"] || "").toString().trim();
+                    const sheetRoll = (row["RollNumber"] || "").toString().trim();
                     const sheetName = (row["Name"] || "").toString().trim().toLowerCase();
                     
                     if (roll && sheetRoll === roll) return true;
@@ -169,18 +108,17 @@
                 if(student) { 
                     showVerifiedData(student); 
                 } else { 
-                    alert("रिकॉर्ड नहीं मिला! कृपया जांचें कि क्या यह रोल नंबर आपकी गूगल शीट में सही-सही भरा हुआ है।"); 
+                    alert("रिकॉर्ड नहीं मिला! कृपया सुनिश्चित करें कि यह रोल नंबर गूगल शीट में मौजूद है।"); 
                 }
             },
             error: function(err) {
-                alert("डेटा लोड करने में विफल! समाधान: अपनी गूगल शीट में जाकर 'File -> Share -> Publish to Web' पर क्लिक करके पब्लिश बटन अवश्य दबाएं।");
+                alert("डेटा फ़ेच एरर! कृपया सुनिश्चित करें कि गूगल शीट में 'File -> Share -> Publish to Web' किया हुआ है।");
                 console.error(err);
             }
         });
     }
 
     function showVerifiedData(data) {
-        // मैपिंग शीट कॉलम
         document.getElementById('lblLearnerCode').innerText = data["LearnerCode"] || "---";
         document.getElementById('lblName').innerText = data["Name"] || "---";
         document.getElementById('lblRelation').innerText = data["S/o, D/o, W/o"] || "S/o";
@@ -193,8 +131,16 @@
         document.getElementById('lblEndDate').innerText = data["EndDate"] || "---";
         document.getElementById('lblIssueDate').innerText = data["Date"] || "---";
 
-        // रिकॉर्ड प्रदर्शित करना
         document.getElementById('verification-area').style.display = 'block';
+    }
+
+    function checkUrlForQR() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const roll = urlParams.get('roll');
+        if(roll) { 
+            document.getElementById('sRoll').value = roll; 
+            setTimeout(searchData, 600); 
+        }
     }
 </script>
 </body>
