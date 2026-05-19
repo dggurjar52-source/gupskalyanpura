@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ऑनलाइन सत्यापन पोर्टल - GUPS कल्याणपुरा</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f7f6; margin: 0; padding: 0; color: #333; }
@@ -16,7 +15,7 @@
         .input-box { padding: 10px; width: 180px; border: 1px solid #ccc; border-radius: 4px; margin: 5px; font-size: 14px; }
         .btn-verify { background: #e63946; color: white; padding: 10px 25px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 14px; }
         
-        /* सत्यापन डेटा टेबल का डिज़ाइन (यूनिवर्सिटी की मांग के अनुसार) */
+        /* सत्यापन डेटा टेबल का डिज़ाइन */
         #verification-area { display: none; margin-top: 20px; border: 2px solid #2a9d8f; border-radius: 6px; padding: 20px; background: #fafafa; }
         .status-badge { background: #2a9d8f; color: white; padding: 6px 12px; display: inline-block; font-weight: bold; border-radius: 4px; margin-bottom: 15px; font-size: 14px; }
         .data-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 16px; }
@@ -68,8 +67,9 @@
 </div>
 
 <script>
-    // ★★★ अपनी नई गूगल शीट का CSV लिंक यहाँ नीचे डबल कोट्स में डालें ★★★
-    const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBoA7xgXY1dcSuuYbTt-rsKV0gpKdUeNmq2roHIMAg6EBPkxrYEIANB4Ik3UKfqxls8vd9OIRvOxs_/pub?output=csv";
+    // ★★★ यहाँ अपनी गूगल शीट का CSV लिंक ही पेस्ट रहने दें ★★★
+    const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBoA7xgXY1dcSuuYbTt-rsKV0gpKdUeNmq2roHIMAg6EBPkxrYEIANB4Ik3UKfqxls8vd9OIRvOxs_/pub?output=csv"; 
+    // ऊपर उदाहरण के लिए लिंक है, आप अपनी शीट का वेब पब्लिश (CSV) लिंक यहाँ डबल कोट्स में डाल दें।
 
     function searchData() {
         const roll = document.getElementById('sRoll').value.trim();
@@ -83,38 +83,50 @@
         Papa.parse(sheetUrl, {
             download: true,
             header: true,
+            skipEmptyLines: true,
             complete: function(results) {
-                // गूगल शीट के कॉलम के नाम के आधार पर खोजना
-                const student = results.data.find(row => 
-                    (roll && row.RollNumber == roll) || 
-                    (name && row.Name && row.Name.toLowerCase().includes(name))
-                );
+                console.log("Sheet Data Loaded:", results.data); // टेस्टिंग के लिए
+
+                // आपकी शीट के कॉलम के नामों (RollNumI या RollNumber, Name आदि) के आधार पर खोजना
+                const student = results.data.find(row => {
+                    const sheetRoll = (row.RollNumI || row.RollNumber || row.RollNo || "").toString().trim();
+                    const sheetName = (row.Name || row.StudentName || "").toString().trim().toLowerCase();
+                    
+                    return (roll && sheetRoll === roll) || (name && sheetName.includes(name));
+                });
 
                 if(student) { 
                     showVerifiedData(student); 
                 } else { 
-                    alert("रिकॉर्ड नहीं मिला! कृपया विवरण जांचें या सुनिश्चित करें कि डेटा शीट में दर्ज है।"); 
+                    alert("रिकॉर्ड नहीं मिला! कृपया विवरण जांचें या सुनिश्चित करें कि डेटा शीट में सही दर्ज है।"); 
                 }
+            },
+            error: function(err) {
+                alert("गूगल शीट लोड करने में समस्या आई। कृपया अपना CSV लिंक जांचें!");
+                console.error(err);
             }
         });
     }
 
     function showVerifiedData(data) {
-        // टेबल में डेटा भरना
-        document.getElementById('lblLearnerCode').innerText = data.LearnerCode ? data.LearnerCode : "---";
-        document.getElementById('lblName').innerText = data.Name ? data.Name : "---";
-        document.getElementById('lblRelation').innerText = data.Relation ? data.Relation : "S/o";
-        document.getElementById('lblFather').innerText = data.FatherName ? data.FatherName : "---";
-        document.getElementById('lblRoll').innerText = data.RollNumber ? data.RollNumber : "---";
-        document.getElementById('lblEnroll').innerText = data.EnrollmentNo ? data.EnrollmentNo : "---";
-        document.getElementById('lblCourse').innerText = data.Course ? data.Course : "---";
-        document.getElementById('lblYear').innerText = data.Year ? data.Year : "---";
-        document.getElementById('lblStartDate').innerText = data.StartDate ? data.StartDate : "---";
-        document.getElementById('lblEndDate').innerText = data.EndDate ? data.EndDate : "---";
-        document.getElementById('lblIssueDate').innerText = data.Date ? data.Date : "---";
+        // आपकी गूगल शीट के कॉलम नामों के अनुसार डेटा मैप करना
+        document.getElementById('lblLearnerCode').innerText = data.LearnerCode || data.LearnerCode || "---";
+        document.getElementById('lblName').innerText = data.Name || data.StudentName || "---";
+        document.getElementById('lblRelation').innerText = data.Relation || "S/o";
+        document.getElementById('lblFather').innerText = data.FatherName || data.FatherName || "---";
+        
+        // रोल नंबर के लिए दोनों तरह के कॉलम नाम (RollNumI या RollNumber) सपोर्टेड हैं
+        document.getElementById('lblRoll').innerText = data.RollNumI || data.RollNumber || data.RollNo || "---";
+        
+        document.getElementById('lblEnroll').innerText = data.EnrollmentNo || data.EnrollNo || "---";
+        document.getElementById('lblCourse').innerText = data.course || data.Course || "---";
+        document.getElementById('lblYear').innerText = data.Year || "2025-2026";
+        document.getElementById('lblStartDate').innerText = data.StartDate || "---";
+        document.getElementById('lblEndDate').innerText = data.EndDate || "---";
+        document.getElementById('lblIssueDate').innerText = data.Date || data.IssueDate || "---";
 
-        // वेरिफिकेशन एरिया दिखाना
-        document.getElementById('verification-area').style.style.display = 'block';
+        // एरर फिक्स: अब यह बिना किसी रुकावट के टेबल दिखाएगा
+        document.getElementById('verification-area').style.display = 'block';
     }
 
     function checkUrlForQR() {
@@ -122,8 +134,7 @@
         const roll = urlParams.get('roll');
         if(roll) { 
             document.getElementById('sRoll').value = roll; 
-            // थोड़ा रुक कर सर्च चलाना ताकि पार्सर लोड हो सके
-            setTimeout(searchData, 500); 
+            setTimeout(searchData, 600); 
         }
     }
 </script>
