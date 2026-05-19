@@ -12,10 +12,9 @@
         header p { margin: 5px 0 0 0; font-size: 14px; opacity: 0.9; }
         .container { max-width: 750px; margin: 25px auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
         .search-section { background: #f8f9fa; padding: 20px; border: 1px solid #ddd; border-radius: 6px; text-align: center; margin-bottom: 25px; }
-        .input-box { padding: 10px; width: 180px; border: 1px solid #ccc; border-radius: 4px; margin: 5px; font-size: 14px; }
+        .input-box { padding: 10px; width: 220px; border: 1px solid #ccc; border-radius: 4px; margin: 5px; font-size: 14px; }
         .btn-verify { background: #e63946; color: white; padding: 10px 25px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 14px; }
         
-        /* सत्यापन डेटा टेबल का डिज़ाइन */
         #verification-area { display: none; margin-top: 20px; border: 2px solid #2a9d8f; border-radius: 6px; padding: 20px; background: #fafafa; }
         .status-badge { background: #2a9d8f; color: white; padding: 6px 12px; display: inline-block; font-weight: bold; border-radius: 4px; margin-bottom: 15px; font-size: 14px; }
         .data-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 16px; }
@@ -35,9 +34,9 @@
 
 <div class="container">
     <div class="search-section">
-        <h3 style="margin-top:0; color:#1d3557;">सर्टिफिकेट रिकॉर्ड खोजें</h3>
-        <input type="text" id="sRoll" class="input-box" placeholder="यूनिवर्सिटी रोल नंबर">
-        <input type="text" id="sName" class="input-box" placeholder="विद्यार्थी का नाम">
+        <h3 style="margin-top:0; color:#1d3557;">यूनिवर्सिटी रोल नंबर से सर्टिफिकेट खोजें</h3>
+        <input type="text" id="sRoll" class="input-box" placeholder="यूनिवर्सिटी रोल नंबर दर्ज करें">
+        <input type="text" id="sName" class="input-box" placeholder="विद्यार्थी का नाम (वैकल्पिक)">
         <button class="btn-verify" onclick="searchData()">सत्यापित करें</button>
     </div>
 
@@ -67,16 +66,18 @@
 </div>
 
 <script>
-    // ★★★ यहाँ अपनी गूगल शीट का CSV लिंक ही पेस्ट रहने दें ★★★
-    const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBoA7xgXY1dcSuuYbTt-rsKV0gpKdUeNmq2roHIMAg6EBPkxrYEIANB4Ik3UKfqxls8vd9OIRvOxs_/pub?output=csv"; 
-    // ऊपर उदाहरण के लिए लिंक है, आप अपनी शीट का वेब पब्लिश (CSV) लिंक यहाँ डबल कोट्स में डाल दें।
+    // आपकी गूगल शीट की सही आईडी
+    const sheetId = "11LYsf-NiSMAzp4cSo2VFoFZZZG6g_q_9TTQjLau_1Xk"; 
+    
+    // यह लिंक गूगल सर्वर की 503 एरर को बायपास करके डायरेक्ट CSV डेटा फ़ेच करेगा
+    const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=0`;
 
     function searchData() {
         const roll = document.getElementById('sRoll').value.trim();
         const name = document.getElementById('sName').value.trim().toLowerCase();
 
         if(!roll && !name) {
-            alert("कृपया रोल नंबर या नाम दर्ज करें!");
+            alert("कृपया यूनिवर्सिटी रोल नंबर दर्ज करें!");
             return;
         }
 
@@ -85,37 +86,38 @@
             header: true,
             skipEmptyLines: true,
             complete: function(results) {
-                console.log("Sheet Data Loaded:", results.data); // टेस्टिंग के लिए
-
-                // आपकी शीट के कॉलम के नामों (RollNumI या RollNumber, Name आदि) के आधार पर खोजना
+                // अब यह लॉजिक कड़ाई से आपकी शीट के 'RollNumI' कॉलम में यूनिवर्सिटी रोल नंबर का मिलान करेगा
                 const student = results.data.find(row => {
                     const sheetRoll = (row.RollNumI || row.RollNumber || row.RollNo || "").toString().trim();
                     const sheetName = (row.Name || row.StudentName || "").toString().trim().toLowerCase();
                     
-                    return (roll && sheetRoll === roll) || (name && sheetName.includes(name));
+                    // यूनिवर्सिटी रोल नंबर मैच होना अनिवार्य है, या नाम से आंशिक मिलान
+                    if (roll && sheetRoll === roll) return true;
+                    if (!roll && name && sheetName.includes(name)) return true;
+                    return false;
                 });
 
                 if(student) { 
                     showVerifiedData(student); 
                 } else { 
-                    alert("रिकॉर्ड नहीं मिला! कृपया विवरण जांचें या सुनिश्चित करें कि डेटा शीट में सही दर्ज है।"); 
+                    alert("रिकॉर्ड नहीं मिला! कृपया सुनिश्चित करें कि दर्ज किया गया यूनिवर्सिटी रोल नंबर गूगल शीट में मौजूद है।"); 
                 }
             },
             error: function(err) {
-                alert("गूगल शीट लोड करने में समस्या आई। कृपया अपना CSV लिंक जांचें!");
+                alert("डेटाबेस सर्वर से संपर्क नहीं हो पाया। कृपया इंटरनेट कनेक्शन या गूगल शीट की सेटिंग्स जांचें।");
                 console.error(err);
             }
         });
     }
 
     function showVerifiedData(data) {
-        // आपकी गूगल शीट के कॉलम नामों के अनुसार डेटा मैप करना
+        // डेटा मैपिंग - गूगल शीट के कॉलम नामों के सटीक मिलान के साथ
         document.getElementById('lblLearnerCode').innerText = data.LearnerCode || data.LearnerCode || "---";
         document.getElementById('lblName').innerText = data.Name || data.StudentName || "---";
         document.getElementById('lblRelation').innerText = data.Relation || "S/o";
         document.getElementById('lblFather').innerText = data.FatherName || data.FatherName || "---";
         
-        // रोल नंबर के लिए दोनों तरह के कॉलम नाम (RollNumI या RollNumber) सपोर्टेड हैं
+        // मुख्य यूनिवर्सिटी रोल नंबर
         document.getElementById('lblRoll').innerText = data.RollNumI || data.RollNumber || data.RollNo || "---";
         
         document.getElementById('lblEnroll').innerText = data.EnrollmentNo || data.EnrollNo || "---";
@@ -125,7 +127,7 @@
         document.getElementById('lblEndDate').innerText = data.EndDate || "---";
         document.getElementById('lblIssueDate').innerText = data.Date || data.IssueDate || "---";
 
-        // एरर फिक्स: अब यह बिना किसी रुकावट के टेबल दिखाएगा
+        // वेरिफिकेशन टेबल प्रदर्शित करें
         document.getElementById('verification-area').style.display = 'block';
     }
 
