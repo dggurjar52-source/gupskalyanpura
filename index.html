@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ऑनलाइन सत्यापन पोर्टल - GUPS कल्याणपुरा</title>
+    <title>आधिकारिक ऑनलाइन सत्यापन पोर्टल - GUPS कल्याणपुरा</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f7f6; margin: 0; padding: 0; color: #333; }
@@ -47,15 +47,16 @@
         </div>
         
         <table class="data-table">
-            <tr><th>Learner's Code (सीरियल)</th><td id="lblLearnerCode">---</td></tr>
+            <tr><th>Learner's Code (लर्नर कोड)</th><td id="lblLearnerCode">---</td></tr>
             <tr><th>Student Name (नाम)</th><td id="lblName">---</td></tr>
             <tr><th>Relation (नाता)</th><td id="lblRelation">---</td></tr>
-            <tr><th>Father/Husband Name</th><td id="lblFather">---</td></tr>
-            <tr><th>University Roll No.</th><td id="lblRoll">---</td></tr>
+            <tr><th>Father/Husband Name (पिता का नाम)</th><td id="lblFather">---</td></tr>
+            <tr><th>University Roll No. (रोल नंबर)</th><td id="lblRoll">---</td></tr>
             <tr><th>Enrollment No. (नामांकन)</th><td id="lblEnroll">---</td></tr>
-            <tr><th>Course & Semester</th><td id="lblCourse">---</td></tr>
+            <tr><th>Course & Semester (कोर्स)</th><td id="lblCourse">---</td></tr>
             <tr><th>Academic Year (सत्र)</th><td id="lblYear">---</td></tr>
-            <tr><th>Internship Period (अवधि)</th><td><span id="lblStartDate">---</span> से <span id="lblEndDate">---</span></td></tr>
+            <tr><th>Internship Start Date (शुरुआत तिथि)</th><td id="lblStartDate">---</td></tr>
+            <tr><th>Internship End Date (समाप्ति तिथि)</th><td id="lblEndDate">---</td></tr>
             <tr><th>Date of Issue (जारी तिथि)</th><td id="lblIssueDate">---</td></tr>
         </table>
         
@@ -67,18 +68,10 @@
 
 <script>
     // ********************************************************************************
-    // ★★ लाइन नंबर 76: नीचे उद्धरण चिह्न "" के बीच अपनी गूगल शीट का पूरा लिंक पेस्ट करें ★★
+    // ★★ लाइन नंबर 78: नीचे दिए गए उद्धरण चिन्हों "" के बीच अपनी वेब-पब्लिश (.csv) शीट का लिंक पेस्ट करें ★★
     // ********************************************************************************
-    const MyGoogleSheetUrl = "https://docs.google.com/spreadsheets/d/1S--0HjRw-mDRvmoq7fikwj-4tCancRyN3_ncUKWSJao/edit";
+    const MyPublishedCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBoA7xgXY1dcSuuYbTt-rsKV0gpKdUeNmq2roHIMAg6EBPkxrYEIANB4Ik3UKfqxls8vd9OIRvOxs_/pub?output=csv";
     // ********************************************************************************
-
-    let finalCsvUrl = MyGoogleSheetUrl;
-    if (https://docs.google.com/spreadsheets/d/e/2PACX-1vQBoA7xgXY1dcSuuYbTt-rsKV0gpKdUeNmq2roHIMAg6EBPkxrYEIANB4Ik3UKfqxls8vd9OIRvOxs_/pub?output=csv('/spreadsheets/d/')) {
-        const sheetId = MyGoogleSheetUrl.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/)[1];
-        finalCsvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=0`;
-    } else if (MyGoogleSheetUrl.includes('pub?') && !MyGoogleSheetUrl.includes('output=csv')) {
-        finalCsvUrl = MyGoogleSheetUrl.replace(/output=[a-zA-Z]+/, 'output=csv');
-    }
 
     function searchData() {
         const roll = document.getElementById('sRoll').value.trim();
@@ -89,13 +82,14 @@
             return;
         }
 
-        Papa.parse(finalCsvUrl, {
+        Papa.parse(MyPublishedCsvUrl, {
             download: true,
             header: true,
             skipEmptyLines: true,
             complete: function(results) {
-                console.log("डेटा:", results.data);
+                console.log("गूगल शीट डेटा:", results.data);
 
+                // सर्टिफिकेट जेनरेट करने के कोड वाले हूबहू कॉलम नामों से मिलान
                 const student = results.data.find(row => {
                     const sheetRoll = (row["RollNumber"] || "").toString().trim();
                     const sheetName = (row["Name"] || "").toString().trim().toLowerCase();
@@ -108,20 +102,21 @@
                 if(student) { 
                     showVerifiedData(student); 
                 } else { 
-                    alert("रिकॉर्ड नहीं मिला! कृपया सुनिश्चित करें कि यह रोल नंबर गूगल शीट में मौजूद है।"); 
+                    alert("रिकॉर्ड नहीं मिला! कृपया सुनिश्चित करें कि गूगल शीट में हेडिंग्स का नाम और रोल नंबर बिल्कुल सही है।"); 
                 }
             },
             error: function(err) {
-                alert("डेटा फ़ेच एरर! कृपया सुनिश्चित करें कि गूगल शीट में 'File -> Share -> Publish to Web' किया हुआ है।");
+                alert("डेटा फ़ेच एरर! कृपया सुनिश्चित करें कि गूगल शीट में 'File -> Share -> Publish to Web' करके .csv फॉर्मेट चुना गया है।");
                 console.error(err);
             }
         });
     }
 
     function showVerifiedData(data) {
+        // आपकी गूगल शीट की सटीक हेडिंग्स के साथ डेटा डिस्प्ले मैपिंग
         document.getElementById('lblLearnerCode').innerText = data["LearnerCode"] || "---";
         document.getElementById('lblName').innerText = data["Name"] || "---";
-        document.getElementById('lblRelation').innerText = data["S/o, D/o, W/o"] || "S/o";
+        document.getElementById('lblRelation').innerText = data["Relation"] || "---";
         document.getElementById('lblFather').innerText = data["FatherName"] || "---";
         document.getElementById('lblRoll').innerText = data["RollNumber"] || "---";
         document.getElementById('lblEnroll').innerText = data["EnrollmentNo"] || "---";
